@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using VehiclePartsIMS_Backend.Data;
+using VehiclePartsIMS_Backend.Data.Entities;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,7 +16,7 @@ builder.Services.AddDbContext<AppDbContext>(
     options => options.UseNpgsql(builder.Configuration.GetConnectionString("Postgres"))
 );
 builder.Services
-    .AddIdentity<IdentityUser<int>, IdentityRole<int>>()
+    .AddIdentity<User, IdentityRole<int>>()
     .AddEntityFrameworkStores<AppDbContext>()
     .AddDefaultTokenProviders();
 
