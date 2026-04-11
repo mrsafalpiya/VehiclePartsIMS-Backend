@@ -1,10 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
+using VehiclePartsIMS_Backend.Data.Entities;
 
 namespace VehiclePartsIMS_Backend.Data
 {
-    public class AppDbContext : IdentityDbContext<IdentityUser<int>, IdentityRole<int>, int>
+    public class AppDbContext : IdentityDbContext<User, IdentityRole<int>, int>
     {
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
@@ -14,7 +15,7 @@ namespace VehiclePartsIMS_Backend.Data
         {
             base.OnModelCreating(builder);
 
-            builder.Entity<IdentityUser<int>>().ToTable("Users");
+            builder.Entity<User>().ToTable("Users");
             builder.Entity<IdentityRole<int>>().ToTable("Roles");
             builder.Entity<IdentityUserRole<int>>().ToTable("UserRoles");
 
@@ -50,7 +51,7 @@ namespace VehiclePartsIMS_Backend.Data
 
         public void SeedAdmin(ModelBuilder builder)
         {
-            var admin = new IdentityUser<int>
+            var admin = new User
             {
                 Id = 1,
                 UserName = "admin@admin.com",
@@ -60,10 +61,11 @@ namespace VehiclePartsIMS_Backend.Data
                 EmailConfirmed = true,
                 PasswordHash = "AQAAAAIAAYagAAAAEHJuboYiX8TZciAU5na/HqkcTjqvg9XQKlbwSQIpIW/CXrocigNl+wuxwMlzigP7oQ==", // admin@123
                 SecurityStamp = string.Empty,
-                ConcurrencyStamp = "133257ba-cf42-4cd4-a326-5b513272e9de"
+                ConcurrencyStamp = "133257ba-cf42-4cd4-a326-5b513272e9de",
+                FullName = "System Admin"
             };
 
-            builder.Entity<IdentityUser<int>>().HasData(admin);
+            builder.Entity<User>().HasData(admin);
         }
     }
 }
