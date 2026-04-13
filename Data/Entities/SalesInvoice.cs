@@ -20,5 +20,7 @@ namespace VehiclePartsIMS_Backend.Data.Entities
         public int Subtotal { get; set; }
         public int? LoyaltyDiscount { get; set; }
         public int FinalTotal { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; }
     }
 }
