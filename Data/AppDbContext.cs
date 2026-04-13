@@ -33,6 +33,12 @@ namespace VehiclePartsIMS_Backend.Data
             SeedAdmin(builder);
         }
 
+        protected override void ConfigureConventions(ModelConfigurationBuilder builder)
+        {
+            builder.Properties<Enum>()
+                .HaveConversion<string>();
+        }
+
         public void SeedRoles(ModelBuilder builder)
         {
             List<IdentityRole<int>> roles = [
