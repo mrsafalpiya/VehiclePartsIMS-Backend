@@ -289,6 +289,10 @@ namespace VehiclePartsIMS_Backend.Migrations
                     b.Property<DateOnly>("InvoiceDate")
                         .HasColumnType("date");
 
+                    b.Property<string>("InvoiceNumber")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<int>("VendorId")
                         .HasColumnType("integer");
 
@@ -357,6 +361,9 @@ namespace VehiclePartsIMS_Backend.Migrations
 
                     b.Property<int?>("LoyaltyDiscount")
                         .HasColumnType("integer");
+
+                    b.Property<DateTime?>("PaymentDueDate")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("PaymentStatus")
                         .IsRequired()
@@ -675,7 +682,7 @@ namespace VehiclePartsIMS_Backend.Migrations
                         .IsRequired();
 
                     b.HasOne("VehiclePartsIMS_Backend.Data.Entities.PurchaseInvoice", "PurchaseInvoice")
-                        .WithMany()
+                        .WithMany("Items")
                         .HasForeignKey("PurchaseInvoiceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -713,7 +720,7 @@ namespace VehiclePartsIMS_Backend.Migrations
                         .IsRequired();
 
                     b.HasOne("VehiclePartsIMS_Backend.Data.Entities.SalesInvoice", "SalesInvoice")
-                        .WithMany()
+                        .WithMany("Items")
                         .HasForeignKey("SalesInvoiceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -732,6 +739,16 @@ namespace VehiclePartsIMS_Backend.Migrations
                         .IsRequired();
 
                     b.Navigation("Customer");
+                });
+
+            modelBuilder.Entity("VehiclePartsIMS_Backend.Data.Entities.PurchaseInvoice", b =>
+                {
+                    b.Navigation("Items");
+                });
+
+            modelBuilder.Entity("VehiclePartsIMS_Backend.Data.Entities.SalesInvoice", b =>
+                {
+                    b.Navigation("Items");
                 });
 #pragma warning restore 612, 618
         }
