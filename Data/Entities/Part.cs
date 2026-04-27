@@ -12,6 +12,6 @@ namespace VehiclePartsIMS_Backend.Data.Entities
         public int SellingPrice { get; set; }
         public int StockQuantity { get; set; }
         public int VendorId { get; set; }
-        public required Vendor Vendor { get; set; }
+        public Vendor Vendor { get; set; } = null!;
     }
 }

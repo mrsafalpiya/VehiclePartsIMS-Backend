@@ -24,6 +24,8 @@ builder.Services
     .AddDefaultTokenProviders();
 
 builder.Services.AddScoped<IVendorService, VendorService>();
+builder.Services.AddScoped<IPartService, PartService>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
