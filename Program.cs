@@ -2,6 +2,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using VehiclePartsIMS_Backend.Data;
 using VehiclePartsIMS_Backend.Data.Entities;
+using VehiclePartsIMS_Backend.Services.Implementations;
+using VehiclePartsIMS_Backend.Services.Interfaces;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,6 +23,7 @@ builder.Services
     .AddEntityFrameworkStores<AppDbContext>()
     .AddDefaultTokenProviders();
 
+builder.Services.AddScoped<IVendorService, VendorService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
