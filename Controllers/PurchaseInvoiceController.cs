@@ -1,13 +1,13 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using VehiclePartsIMS_Backend.DTOs;
-using VehiclePartsIMS_Backend.Services;
+using VehiclePartsIMS_Backend.Services.Interfaces;
 
 namespace VehiclePartsIMS_Backend.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    //[Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin")]
     public class PurchaseInvoiceController : ControllerBase
     {
         private readonly IInvoiceService _invoiceService;

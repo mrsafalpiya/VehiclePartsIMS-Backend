@@ -3,8 +3,9 @@ using VehiclePartsIMS_Backend.Data;
 using VehiclePartsIMS_Backend.Data.Entities;
 using VehiclePartsIMS_Backend.Data.Enums;
 using VehiclePartsIMS_Backend.DTOs;
+using VehiclePartsIMS_Backend.Services.Interfaces;
 
-namespace VehiclePartsIMS_Backend.Services
+namespace VehiclePartsIMS_Backend.Services.Implementations
 {
     public class InvoiceService : IInvoiceService
     {

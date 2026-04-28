@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using VehiclePartsIMS_Backend.DTOs;
-using VehiclePartsIMS_Backend.Services;
+using VehiclePartsIMS_Backend.Services.Interfaces;
 
 namespace VehiclePartsIMS_Backend.Controllers
 {
@@ -20,7 +20,7 @@ namespace VehiclePartsIMS_Backend.Controllers
         /// F13: Customer creates a part request (Anyone with customer role)
         /// </summary>
         [HttpPost]
-        //[Authorize(Roles = "Admin,Staff,Customer")]
+        [Authorize(Roles = "Admin,Staff,Customer")]
         public async Task<IActionResult> CreatePartRequest([FromBody] PartRequestCreateDto dto)
         {
             try
@@ -48,7 +48,7 @@ namespace VehiclePartsIMS_Backend.Controllers
         /// F13: Get all part requests (Admin only)
         /// </summary>
         [HttpGet]
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetAllPartRequests()
         {
             try
@@ -66,7 +66,7 @@ namespace VehiclePartsIMS_Backend.Controllers
         /// F13: Get pending part requests (Admin/Staff)
         /// </summary>
         [HttpGet("pending")]
-        //[Authorize(Roles = "Admin,Staff")]
+        [Authorize(Roles = "Admin,Staff")]
         public async Task<IActionResult> GetPendingRequests()
         {
             try
@@ -84,7 +84,7 @@ namespace VehiclePartsIMS_Backend.Controllers
         /// F13: Get part requests by customer ID
         /// </summary>
         [HttpGet("customer/{customerId}")]
-        //[Authorize(Roles = "Admin,Staff,Customer")]
+        [Authorize(Roles = "Admin,Staff,Customer")]
         public async Task<IActionResult> GetRequestsByCustomer(int customerId)
         {
             try
@@ -106,7 +106,7 @@ namespace VehiclePartsIMS_Backend.Controllers
         /// F13: Update part request status (Admin/Staff)
         /// </summary>
         [HttpPut("status")]
-        //[Authorize(Roles = "Admin,Staff")]
+        [Authorize(Roles = "Admin,Staff")]
         public async Task<IActionResult> UpdateRequestStatus([FromBody] PartRequestUpdateDto dto)
         {
             try
