@@ -30,6 +30,7 @@ builder.Services.AddScoped<IVendorService, VendorService>();
 builder.Services.AddScoped<IPartService, PartService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IJwtService, JwtService>();
+builder.Services.AddScoped<IStaffService, StaffService>();
 
 builder.Services.AddAuthentication(
     options =>
