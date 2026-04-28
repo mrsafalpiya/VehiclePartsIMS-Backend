@@ -22,5 +22,7 @@ namespace VehiclePartsIMS_Backend.Data.Entities
         public int FinalTotal { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
+        
+        public ICollection<SalesInvoiceItem> SalesInvoiceItems { get; set; } = [];
     }
 }
