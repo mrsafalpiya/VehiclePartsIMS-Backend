@@ -90,7 +90,7 @@ namespace VehiclePartsIMS_Backend.Services.Implementations
 
                 return (true, "Staff account created successfully.", MapToDto(user, dto.Role));
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 await transaction.RollbackAsync();
                 return (false, "Failed to create staff account.", null);

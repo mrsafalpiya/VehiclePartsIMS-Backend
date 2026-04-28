@@ -18,7 +18,7 @@ namespace VehiclePartsIMS_Backend.Services.Implementations
         {
             var invoices = await _context.SalesInvoices
                 .Include(i => i.Customer)
-                .Include(i => i.SalesInvoiceItems)
+                .Include(i => i.Items)
                     .ThenInclude(item => item.Part)
                 .Where(i => i.CustomerId == customerId)
                 .OrderByDescending(i => i.InvoiceDate)
@@ -29,7 +29,7 @@ namespace VehiclePartsIMS_Backend.Services.Implementations
                 Id = i.Id,
                 InvoiceNumber = i.InvoiceNumber,
                 InvoiceDate = i.InvoiceDate.ToString("yyyy-MM-dd"),
-                LineItems = i.SalesInvoiceItems.Select(item => new SalesInvoiceLineItemDto
+                LineItems = i.Items.Select(item => new SalesInvoiceLineItemDto
                 {
                     PartName = item.Part.PartName,
                     Quantity = item.Quantity,
