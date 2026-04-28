@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Identity;
+using VehiclePartsIMS_Backend.Data;
 using VehiclePartsIMS_Backend.Data.Dtos.Requests;
 using VehiclePartsIMS_Backend.Data.Dtos.Responses;
 using VehiclePartsIMS_Backend.Data.Entities;
@@ -6,7 +7,7 @@ using VehiclePartsIMS_Backend.Services.Interfaces;
 
 namespace VehiclePartsIMS_Backend.Services.Implementations
 {
-    public class StaffService(UserManager<User> userManager) : IStaffService
+    public class StaffService(UserManager<User> userManager, AppDbContext dbContext) : IStaffService
     {
         private static readonly string[] AllowedRoles = ["Admin", "Staff"];
 
@@ -14,7 +15,7 @@ namespace VehiclePartsIMS_Backend.Services.Implementations
         {
             Id = user.Id,
             FullName = user.FullName,
-            Email = user.Email,
+            Email = user.Email ?? string.Empty,
             PhoneNumber = user.PhoneNumber ?? string.Empty,
             Role = role
         };
@@ -56,24 +57,44 @@ namespace VehiclePartsIMS_Backend.Services.Implementations
             if (existingUser != null)
                 return (false, "A user with this email already exists.", null);
 
-            var user = new User
-            {
-                FullName = dto.FullName,
-                Email = dto.Email,
-                UserName = dto.Email,
-                PhoneNumber = dto.PhoneNumber
-            };
+            var transaction = await dbContext.Database.BeginTransactionAsync();
 
-            var createResult = await userManager.CreateAsync(user, dto.Password);
-            if (!createResult.Succeeded)
+            try
             {
-                var errors = createResult.Errors.Select(e => e.Description).ToList();
+                var user = new User
+                {
+                    FullName = dto.FullName,
+                    Email = dto.Email,
+                    EmailConfirmed = true,
+                    UserName = dto.Email,
+                    PhoneNumber = dto.PhoneNumber
+                };
+
+                var createResult = await userManager.CreateAsync(user, dto.Password);
+                if (!createResult.Succeeded)
+                {
+                    await transaction.RollbackAsync();
+                    var errors = createResult.Errors.Select(e => e.Description).ToList();
+                    return (false, "Failed to create staff account.", null);
+                }
+
+                var roleResult = await userManager.AddToRoleAsync(user, dto.Role);
+                if (!roleResult.Succeeded)
+                {
+                    await transaction.RollbackAsync();
+                    var errors = roleResult.Errors.Select(e => e.Description).ToList();
+                    return (false, "Failed to assign role to staff account.", null);
+                }
+
+                await transaction.CommitAsync();
+
+                return (true, "Staff account created successfully.", MapToDto(user, dto.Role));
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
                 return (false, "Failed to create staff account.", null);
             }
-
-            await userManager.AddToRoleAsync(user, dto.Role);
-
-            return (true, "Staff account created successfully.", MapToDto(user, dto.Role));
         }
 
         public async Task<(bool Success, string Message, StaffResponseDto? Data)> UpdateAsync(int id, UpdateStaffDto dto)

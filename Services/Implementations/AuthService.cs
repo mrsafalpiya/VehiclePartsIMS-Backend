@@ -27,13 +27,13 @@ namespace VehiclePartsIMS_Backend.Services.Implementations
                 return null;
             }
 
-            var jwtToken = jwtService.GenerateToken(user.Id, user.FullName, user.Email, loginRequestDto.Role);
+            var jwtToken = jwtService.GenerateToken(user.Id, user.FullName, user.Email ?? string.Empty, loginRequestDto.Role);
 
             return new LoginResponseDto {
                 Token = jwtToken,
                 UserId = user.Id,
                 Name = user.FullName,
-                Email = user.Email,
+                Email = user.Email ?? string.Empty,
                 Role = loginRequestDto.Role
             };
         }
