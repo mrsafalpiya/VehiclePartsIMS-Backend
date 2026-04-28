@@ -7,10 +7,17 @@ using VehiclePartsIMS_Backend.Services.Interfaces;
 namespace VehiclePartsIMS_Backend.Controllers
 {
     [ApiController]
-    [Route("api/staff/customers")]
+    [Route("api/staff-customers")]
     [Authorize(Roles = "Staff,Admin")]
     public class StaffCustomerController(IStaffCustomerService staffCustomerService) : ControllerBase
     {
+        [HttpGet]
+        public async Task<ActionResult<List<CustomerResponseDto>>> GetAll()
+        {
+            var customers = await staffCustomerService.GetAllAsync();
+            return Ok(customers);
+        }
+
         [HttpPost]
         public async Task<ActionResult<CustomerResponseDto>> Register([FromBody] StaffRegisterCustomerDto dto)
         {

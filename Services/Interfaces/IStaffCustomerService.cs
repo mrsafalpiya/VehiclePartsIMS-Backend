@@ -5,6 +5,7 @@ namespace VehiclePartsIMS_Backend.Services.Interfaces
 {
     public interface IStaffCustomerService
     {
+        Task<List<CustomerResponseDto>> GetAllAsync();
         Task<(bool Success, string Message, CustomerResponseDto? Data)> RegisterAsync(StaffRegisterCustomerDto dto);
         Task<StaffCustomerProfileResponseDto?> GetProfileAsync(int customerId);
         Task<(bool Success, string Message)> UpdateCustomerAsync(int customerId, UpdateCustomerDto dto);

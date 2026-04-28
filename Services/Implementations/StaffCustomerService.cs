@@ -10,6 +10,31 @@ namespace VehiclePartsIMS_Backend.Services.Implementations
 {
     public class StaffCustomerService(UserManager<User> userManager, AppDbContext context) : IStaffCustomerService
     {
+        public async Task<List<CustomerResponseDto>> GetAllAsync()
+        {
+            var customerRole = await context.Roles.FirstOrDefaultAsync(r => r.Name == "Customer");
+            if (customerRole == null) return [];
+
+            var customerIds = await context.UserRoles
+                .Where(ur => ur.RoleId == customerRole.Id)
+                .Select(ur => ur.UserId)
+                .ToListAsync();
+
+            var customers = await context.Users
+                .Where(u => customerIds.Contains(u.Id))
+                .OrderBy(u => u.FullName)
+                .Select(u => new CustomerResponseDto
+                {
+                    Id = u.Id,
+                    FullName = u.FullName,
+                    Email = u.Email ?? string.Empty,
+                    PhoneNumber = u.PhoneNumber ?? string.Empty
+                })
+                .ToListAsync();
+
+            return customers;
+        }
+
         public async Task<(bool Success, string Message, CustomerResponseDto? Data)> RegisterAsync(StaffRegisterCustomerDto dto)
         {
             if (dto.Vehicles == null || dto.Vehicles.Count == 0)
