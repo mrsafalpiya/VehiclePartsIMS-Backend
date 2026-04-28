@@ -20,6 +20,7 @@ namespace VehiclePartsIMS_Backend.Data
         public DbSet<SalesInvoiceItem> SalesInvoiceItems { get; set; }
         public DbSet<Appointment> Appointments { get; set; }
         public DbSet<PartRequest> PartRequests { get; set; }
+        public DbSet<ServiceReview> ServiceReviews { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

@@ -8,24 +8,26 @@ using VehiclePartsIMS_Backend.Data.Entities;
 using VehiclePartsIMS_Backend.Services.Implementations;
 using VehiclePartsIMS_Backend.Services.Interfaces;
 
-
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
 builder.Services.AddControllers();
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<AppDbContext>(
     options => options.UseNpgsql(builder.Configuration.GetConnectionString("Postgres"))
 );
+
 builder.Services
     .AddIdentity<User, IdentityRole<int>>()
     .AddEntityFrameworkStores<AppDbContext>()
     .AddDefaultTokenProviders();
 
+// Register application services
+builder.Services.AddScoped<IAppointmentService, AppointmentService>();
+builder.Services.AddScoped<IPartRequestService, PartRequestService>();
+builder.Services.AddScoped<IServiceReviewService, ServiceReviewService>();
+builder.Services.AddScoped<IHistoryService, HistoryService>();
 builder.Services.AddScoped<IVendorService, VendorService>();
 builder.Services.AddScoped<IPartService, PartService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
@@ -76,7 +78,6 @@ builder.Services.AddAuthentication(
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
@@ -89,7 +90,6 @@ app.UseHttpsRedirection();
 app.UseCors();
 app.UseAuthentication();
 app.UseAuthorization();
-
 app.MapControllers();
 
 app.Run();
