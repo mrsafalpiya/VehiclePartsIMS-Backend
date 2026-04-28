@@ -1,5 +1,6 @@
 ﻿using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using System.Text;
 using VehiclePartsIMS_Backend.Services.Interfaces;
 
@@ -19,10 +20,10 @@ namespace VehiclePartsIMS_Backend.Services.Implementations
                 issuer: jwtOptions["Issuer"],
                 audience: jwtOptions["Audience"],
                 claims: [
-                    new System.Security.Claims.Claim("id", userId.ToString()),
-                    new System.Security.Claims.Claim("name", name),
-                    new System.Security.Claims.Claim("email", email),
-                    new System.Security.Claims.Claim("role", role)
+                    new Claim("subject", userId.ToString()),
+                    new Claim(ClaimTypes.Name, name),
+                    new Claim(ClaimTypes.Email, email),
+                    new Claim(ClaimTypes.Role, role)
                 ],
                 expires: DateTime.UtcNow.AddMinutes(Convert.ToDouble(jwtOptions["ExpiresInMinutes"]!)),
                 signingCredentials: signingCredentials
