@@ -82,6 +82,11 @@ namespace VehiclePartsIMS_Backend.Data
             };
 
             builder.Entity<User>().HasData(admin);
+            builder.Entity<IdentityUserRole<int>>().HasData(new IdentityUserRole<int>
+            {
+                UserId = admin.Id,
+                RoleId = 1
+            });
         }
     }
 }
