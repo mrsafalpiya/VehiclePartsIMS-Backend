@@ -14,7 +14,7 @@ namespace VehiclePartsIMS_Backend.Services.Implementations
         {
             Id = user.Id,
             FullName = user.FullName,
-            Email = user.Email,
+            Email = user.Email ?? string.Empty,
             PhoneNumber = user.PhoneNumber ?? string.Empty,
             HomeAddress = user.HomeAddress ?? string.Empty
         };
@@ -41,6 +41,7 @@ namespace VehiclePartsIMS_Backend.Services.Implementations
             {
                 FullName = dto.FullName,
                 Email = dto.Email,
+                EmailConfirmed = true,
                 UserName = dto.Email,
                 PhoneNumber = dto.PhoneNumber,
                 HomeAddress = dto.HomeAddress

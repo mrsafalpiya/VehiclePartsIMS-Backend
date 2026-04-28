@@ -27,6 +27,7 @@ namespace VehiclePartsIMS_Backend.Data
             base.OnModelCreating(builder);
 
             builder.Entity<User>().ToTable("Users");
+            builder.Entity<User>().Property(u => u.Email).IsRequired();
             builder.Entity<IdentityRole<int>>().ToTable("Roles");
             builder.Entity<IdentityUserRole<int>>().ToTable("UserRoles");
 
