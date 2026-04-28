@@ -20,8 +20,8 @@ namespace VehiclePartsIMS_Backend.Services.Implementations
                 issuer: jwtOptions["Issuer"],
                 audience: jwtOptions["Audience"],
                 claims: [
-                    new Claim("subject", userId.ToString()),
-                    new Claim(ClaimTypes.Name, name),
+                    new Claim(JwtRegisteredClaimNames.Sub, userId.ToString()),
+                    new Claim(JwtRegisteredClaimNames.Name, name),
                     new Claim(ClaimTypes.Email, email),
                     new Claim(ClaimTypes.Role, role)
                 ],
