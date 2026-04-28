@@ -7,5 +7,6 @@ namespace VehiclePartsIMS_Backend.Services.Interfaces
     {
         Task<AppointmentResponseDto> BookAppointmentAsync(int customerId, CreateAppointmentDto dto);
         Task<List<AppointmentResponseDto>> GetMyAppointmentsAsync(int customerId);
+        Task<List<AppointmentResponseDto>> GetAllAppointmentsAsync();
     }
 }

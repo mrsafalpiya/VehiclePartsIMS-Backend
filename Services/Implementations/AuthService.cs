@@ -29,7 +29,8 @@ namespace VehiclePartsIMS_Backend.Services.Implementations
 
             var jwtToken = jwtService.GenerateToken(user.Id, user.FullName, user.Email ?? string.Empty, loginRequestDto.Role);
 
-            return new LoginResponseDto {
+            return new LoginResponseDto
+            {
                 Token = jwtToken,
                 UserId = user.Id,
                 Name = user.FullName,

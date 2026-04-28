@@ -1,5 +1,7 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using VehiclePartsIMS_Backend.Data.Dtos.Requests;
+using VehiclePartsIMS_Backend.Data.Dtos.Responses;
 using VehiclePartsIMS_Backend.Services.Interfaces;
 
 namespace VehiclePartsIMS_Backend.Controllers
@@ -13,6 +15,15 @@ namespace VehiclePartsIMS_Backend.Controllers
         public AppointmentController(IAppointmentService appointmentService)
         {
             _appointmentService = appointmentService;
+        }
+
+        // GET api/appointment  (Staff only)
+        [HttpGet]
+        [Authorize(Roles = "Staff")]
+        public async Task<ActionResult<ApiResponse<List<AppointmentResponseDto>>>> GetAll()
+        {
+            var result = await _appointmentService.GetAllAppointmentsAsync();
+            return Ok(ApiResponse<List<AppointmentResponseDto>>.SuccessResponse(result));
         }
 
         // POST api/appointment?customerId=1
