@@ -796,6 +796,8 @@ namespace VehiclePartsIMS_Backend.Migrations
             modelBuilder.Entity("VehiclePartsIMS_Backend.Data.Entities.SalesInvoice", b =>
                 {
                     b.Navigation("Items");
+                });
+
             modelBuilder.Entity("VehiclePartsIMS_Backend.Data.Entities.Vendor", b =>
                 {
                     b.Navigation("Parts");
