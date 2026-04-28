@@ -1,5 +1,8 @@
-﻿namespace VehiclePartsIMS_Backend.Data.Entities
+﻿using Microsoft.EntityFrameworkCore;
+
+namespace VehiclePartsIMS_Backend.Data.Entities
 {
+    [Index(nameof(InvoiceNumber), IsUnique = true)]
     public class PurchaseInvoice
     {
         public int Id { get; set; }
