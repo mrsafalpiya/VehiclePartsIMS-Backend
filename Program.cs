@@ -1,5 +1,8 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 using VehiclePartsIMS_Backend.Data;
 using VehiclePartsIMS_Backend.Data.Entities;
 using VehiclePartsIMS_Backend.Services.Implementations;
@@ -25,6 +28,38 @@ builder.Services
 
 builder.Services.AddScoped<IVendorService, VendorService>();
 builder.Services.AddScoped<IPartService, PartService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IJwtService, JwtService>();
+
+builder.Services.AddAuthentication(
+    options =>
+    {
+        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+    }
+)
+    .AddJwtBearer(
+        options =>
+        {
+            var jwtOptions = builder.Configuration.GetSection("JWT");
+
+            options.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuer = true,
+                ValidIssuer = jwtOptions["Issuer"],
+
+                ValidateAudience = true,
+                ValidAudience = jwtOptions["Audience"],
+
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions["SecretKey"]!)),
+
+                ValidateLifetime = true,
+            };
+        }
+    );
+
 
 var app = builder.Build();
 
