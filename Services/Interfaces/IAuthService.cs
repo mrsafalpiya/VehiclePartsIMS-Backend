@@ -5,6 +5,6 @@ namespace VehiclePartsIMS_Backend.Services.Interfaces
 {
     public interface IAuthService
     {
-        public Task<ApiResponse<LoginResponseDto>> LoginAsync(LoginRequestDto loginRequestDto);
+        public Task<LoginResponseDto?> LoginAsync(LoginRequestDto loginRequestDto);
     }
 }
