@@ -49,6 +49,17 @@ namespace VehiclePartsIMS_Backend.Services.Implementations
             return appointments.Select(MapToDto).ToList();
         }
 
+        public async Task<List<AppointmentResponseDto>> GetAllAppointmentsAsync()
+        {
+            var appointments = await _context.Appointments
+                .Include(a => a.Customer)
+                .OrderByDescending(a => a.PreferredDate)
+                .ThenByDescending(a => a.PreferredTime)
+                .ToListAsync();
+
+            return appointments.Select(MapToDto).ToList();
+        }
+
         private static AppointmentResponseDto MapToDto(Appointment a) => new()
         {
             Id = a.Id,
