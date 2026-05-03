@@ -51,6 +51,7 @@ builder.Services.AddScoped<IStaffService, StaffService>();
 builder.Services.AddScoped<ICustomerService, CustomerService>();
 builder.Services.AddScoped<IStaffCustomerService, StaffCustomerService>();
 builder.Services.AddScoped<IInvoiceService, InvoiceService>();
+builder.Services.AddScoped<IReportService, ReportService>();
 
 builder.Services.AddCors(options =>
 {
@@ -75,23 +76,18 @@ builder.Services.AddAuthentication(
         options =>
         {
             var jwtOptions = builder.Configuration.GetSection("JWT");
-
             options.TokenValidationParameters = new TokenValidationParameters
             {
                 ValidateIssuer = true,
                 ValidIssuer = jwtOptions["Issuer"],
-
                 ValidateAudience = true,
                 ValidAudience = jwtOptions["Audience"],
-
                 ValidateIssuerSigningKey = true,
                 IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions["SecretKey"]!)),
-
                 ValidateLifetime = true,
             };
         }
     );
-
 
 var app = builder.Build();
 
@@ -105,7 +101,6 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
 app.UseCors();
 app.UseAuthentication();
 app.UseAuthorization();
