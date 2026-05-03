@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using VehiclePartsIMS_Backend.Data;
@@ -11,13 +12,15 @@ using VehiclePartsIMS_Backend.Data;
 namespace VehiclePartsIMS_Backend.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260423060831_AddInvoiceFields")]
+    partial class AddInvoiceFields
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "10.0.7")
+                .HasAnnotation("ProductVersion", "10.0.5")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -156,13 +159,6 @@ namespace VehiclePartsIMS_Backend.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("UserRoles", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            UserId = 1,
-                            RoleId = 1
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<int>", b =>
@@ -305,9 +301,6 @@ namespace VehiclePartsIMS_Backend.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("InvoiceNumber")
-                        .IsUnique();
-
                     b.HasIndex("VendorId");
 
                     b.ToTable("PurchaseInvoices");
@@ -349,6 +342,9 @@ namespace VehiclePartsIMS_Backend.Migrations
                         .HasColumnType("integer");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AmountPaid")
+                        .HasColumnType("integer");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -426,34 +422,6 @@ namespace VehiclePartsIMS_Backend.Migrations
                     b.ToTable("SalesInvoiceItems");
                 });
 
-            modelBuilder.Entity("VehiclePartsIMS_Backend.Data.Entities.ServiceReview", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Comment")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<int>("CustomerId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("StarRating")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CustomerId");
-
-                    b.ToTable("ServiceReviews");
-                });
-
             modelBuilder.Entity("VehiclePartsIMS_Backend.Data.Entities.User", b =>
                 {
                     b.Property<int>("Id")
@@ -470,7 +438,6 @@ namespace VehiclePartsIMS_Backend.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("Email")
-                        .IsRequired()
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)");
 
@@ -682,7 +649,7 @@ namespace VehiclePartsIMS_Backend.Migrations
             modelBuilder.Entity("VehiclePartsIMS_Backend.Data.Entities.Part", b =>
                 {
                     b.HasOne("VehiclePartsIMS_Backend.Data.Entities.Vendor", "Vendor")
-                        .WithMany("Parts")
+                        .WithMany()
                         .HasForeignKey("VendorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -721,7 +688,7 @@ namespace VehiclePartsIMS_Backend.Migrations
                         .IsRequired();
 
                     b.HasOne("VehiclePartsIMS_Backend.Data.Entities.PurchaseInvoice", "PurchaseInvoice")
-                        .WithMany("Items")
+                        .WithMany()
                         .HasForeignKey("PurchaseInvoiceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -759,7 +726,7 @@ namespace VehiclePartsIMS_Backend.Migrations
                         .IsRequired();
 
                     b.HasOne("VehiclePartsIMS_Backend.Data.Entities.SalesInvoice", "SalesInvoice")
-                        .WithMany("Items")
+                        .WithMany()
                         .HasForeignKey("SalesInvoiceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -767,17 +734,6 @@ namespace VehiclePartsIMS_Backend.Migrations
                     b.Navigation("Part");
 
                     b.Navigation("SalesInvoice");
-                });
-
-            modelBuilder.Entity("VehiclePartsIMS_Backend.Data.Entities.ServiceReview", b =>
-                {
-                    b.HasOne("VehiclePartsIMS_Backend.Data.Entities.User", "Customer")
-                        .WithMany()
-                        .HasForeignKey("CustomerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Customer");
                 });
 
             modelBuilder.Entity("VehiclePartsIMS_Backend.Data.Entities.Vehicle", b =>
@@ -789,21 +745,6 @@ namespace VehiclePartsIMS_Backend.Migrations
                         .IsRequired();
 
                     b.Navigation("Customer");
-                });
-
-            modelBuilder.Entity("VehiclePartsIMS_Backend.Data.Entities.PurchaseInvoice", b =>
-                {
-                    b.Navigation("Items");
-                });
-
-            modelBuilder.Entity("VehiclePartsIMS_Backend.Data.Entities.SalesInvoice", b =>
-                {
-                    b.Navigation("Items");
-                });
-
-            modelBuilder.Entity("VehiclePartsIMS_Backend.Data.Entities.Vendor", b =>
-                {
-                    b.Navigation("Parts");
                 });
 #pragma warning restore 612, 618
         }

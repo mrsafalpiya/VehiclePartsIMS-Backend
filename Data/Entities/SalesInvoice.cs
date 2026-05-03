@@ -20,7 +20,11 @@ namespace VehiclePartsIMS_Backend.Data.Entities
         public int Subtotal { get; set; }
         public int? LoyaltyDiscount { get; set; }
         public int FinalTotal { get; set; }
+        public DateTime? PaymentDueDate { get; set; } // Required for Feature 15: Check if payment is overdue by more than 1 month
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
+        
+        public ICollection<SalesInvoiceItem> Items { get; set; } = new List<SalesInvoiceItem>();
+        
     }
 }
