@@ -6,5 +6,6 @@ namespace VehiclePartsIMS_Backend.Services.Interfaces
     public interface IServiceReviewService
     {
         Task<ServiceReviewResponseDto> SubmitReviewAsync(int customerId, CreateServiceReviewDto dto);
+        Task<List<ServiceReviewResponseDto>> GetMyReviewsAsync(int customerId);
     }
 }

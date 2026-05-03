@@ -29,5 +29,20 @@ namespace VehiclePartsIMS_Backend.Controllers
                 return NotFound(new { message = ex.Message });
             }
         }
+
+        // GET api/servicereview/my?customerId=1
+        [HttpGet("my")]
+        public async Task<IActionResult> GetMyReviews([FromQuery] int customerId)
+        {
+            try
+            {
+                var result = await _serviceReviewService.GetMyReviewsAsync(customerId);
+                return Ok(result);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { message = ex.Message });
+            }
+        }
     }
 }

@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using VehiclePartsIMS_Backend.Data;
 using VehiclePartsIMS_Backend.Data.Dtos.Requests;
 using VehiclePartsIMS_Backend.Data.Dtos.Responses;
@@ -32,15 +33,28 @@ namespace VehiclePartsIMS_Backend.Services.Implementations
             _context.ServiceReviews.Add(review);
             await _context.SaveChangesAsync();
 
-            return new ServiceReviewResponseDto
-            {
-                Id = review.Id,
-                CustomerId = review.CustomerId,
-                CustomerName = customer.FullName,
-                StarRating = review.StarRating,
-                Comment = review.Comment,
-                CreatedAt = review.CreatedAt
-            };
+            return MapToDto(review);
         }
+
+        public async Task<List<ServiceReviewResponseDto>> GetMyReviewsAsync(int customerId)
+        {
+            var reviews = await _context.ServiceReviews
+                .Include(r => r.Customer)
+                .Where(r => r.CustomerId == customerId)
+                .OrderByDescending(r => r.CreatedAt)
+                .ToListAsync();
+
+            return reviews.Select(MapToDto).ToList();
+        }
+
+        private static ServiceReviewResponseDto MapToDto(ServiceReview r) => new()
+        {
+            Id = r.Id,
+            CustomerId = r.CustomerId,
+            CustomerName = r.Customer.FullName,
+            StarRating = r.StarRating,
+            Comment = r.Comment,
+            CreatedAt = r.CreatedAt
+        };
     }
 }
