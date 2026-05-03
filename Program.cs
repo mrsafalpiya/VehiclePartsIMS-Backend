@@ -49,6 +49,8 @@ using Microsoft.EntityFrameworkCore;
 using VehiclePartsIMS_Backend.Data;
 using VehiclePartsIMS_Backend.Data.Entities;
 using VehiclePartsIMS_Backend.Services;
+using VehiclePartsIMS_Backend.Services.Implementations;
+using VehiclePartsIMS_Backend.Services.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 

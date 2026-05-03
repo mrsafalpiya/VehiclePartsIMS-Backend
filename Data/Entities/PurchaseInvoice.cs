@@ -5,6 +5,7 @@ namespace VehiclePartsIMS_Backend.Data.Entities
     [Index(nameof(InvoiceNumber), IsUnique = true)]
     public class PurchaseInvoice
     {
+        //public string InvoiceNumber;
         public int Id { get; set; }
         public int VendorId { get; set; }
         public required Vendor Vendor { get; set; }
