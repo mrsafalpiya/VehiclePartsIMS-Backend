@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using VehiclePartsIMS_Backend.DTOs;
 using VehiclePartsIMS_Backend.Services;
+using VehiclePartsIMS_Backend.Services.Interfaces;
 
 namespace VehiclePartsIMS_Backend.Controllers
 {

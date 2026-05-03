@@ -9,7 +9,7 @@ namespace VehiclePartsIMS_Backend.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize(Roles = "Customer")]
+    //[Authorize(Roles = "Customer")]
     public class CustomerController(ICustomerService customerService) : ControllerBase
     {
         private int RequestingUserId => int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);

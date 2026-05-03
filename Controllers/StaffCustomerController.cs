@@ -8,7 +8,7 @@ namespace VehiclePartsIMS_Backend.Controllers
 {
     [ApiController]
     [Route("api/staff-customers")]
-    [Authorize(Roles = "Staff,Admin")]
+    //[Authorize(Roles = "Staff,Admin")]
     public class StaffCustomerController(IStaffCustomerService staffCustomerService) : ControllerBase
     {
         [HttpGet]
