@@ -6,6 +6,7 @@ using Microsoft.OpenApi;
 using System.Text;
 using VehiclePartsIMS_Backend.Data;
 using VehiclePartsIMS_Backend.Data.Entities;
+using VehiclePartsIMS_Backend.Data.Settings;
 using VehiclePartsIMS_Backend.Services.Implementations;
 using VehiclePartsIMS_Backend.Services.Interfaces;
 
@@ -38,6 +39,11 @@ builder.Services
     .AddEntityFrameworkStores<AppDbContext>()
     .AddDefaultTokenProviders();
 
+// Register email settings
+builder.Services.Configure<EmailSettings>(
+    builder.Configuration.GetSection("EmailSettings")
+);
+
 // Register application services
 builder.Services.AddScoped<IAppointmentService, AppointmentService>();
 builder.Services.AddScoped<IPartRequestService, PartRequestService>();
@@ -52,6 +58,7 @@ builder.Services.AddScoped<ICustomerService, CustomerService>();
 builder.Services.AddScoped<IStaffCustomerService, StaffCustomerService>();
 builder.Services.AddScoped<IInvoiceService, InvoiceService>();
 builder.Services.AddScoped<IReportService, ReportService>();
+builder.Services.AddScoped<IEmailService, EmailService>();
 
 builder.Services.AddCors(options =>
 {
