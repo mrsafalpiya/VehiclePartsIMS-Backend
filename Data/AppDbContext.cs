@@ -20,12 +20,14 @@ namespace VehiclePartsIMS_Backend.Data
         public DbSet<SalesInvoiceItem> SalesInvoiceItems { get; set; }
         public DbSet<Appointment> Appointments { get; set; }
         public DbSet<PartRequest> PartRequests { get; set; }
+        public DbSet<ServiceReview> ServiceReviews { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
 
             builder.Entity<User>().ToTable("Users");
+            builder.Entity<User>().Property(u => u.Email).IsRequired();
             builder.Entity<IdentityRole<int>>().ToTable("Roles");
             builder.Entity<IdentityUserRole<int>>().ToTable("UserRoles");
 
@@ -82,6 +84,11 @@ namespace VehiclePartsIMS_Backend.Data
             };
 
             builder.Entity<User>().HasData(admin);
+            builder.Entity<IdentityUserRole<int>>().HasData(new IdentityUserRole<int>
+            {
+                UserId = admin.Id,
+                RoleId = 1
+            });
         }
     }
 }
