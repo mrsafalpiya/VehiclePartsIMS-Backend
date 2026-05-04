@@ -11,9 +11,9 @@ namespace VehiclePartsIMS_Backend.Services.Implementations
     {
         private readonly AppDbContext _context;
         private readonly ILogger<InvoiceService> _logger;
-        
+
         // F16: Loyalty program constants
-        private const int LoyaltyThresholdCents = 5000;  
+        private const int LoyaltyThresholdCents = 5000;
         private const int LoyaltyDiscountPercent = 10;
 
         public InvoiceService(AppDbContext context, ILogger<InvoiceService> logger)
@@ -26,7 +26,7 @@ namespace VehiclePartsIMS_Backend.Services.Implementations
         public async Task<PurchaseInvoiceResponseDto> CreatePurchaseInvoiceAsync(PurchaseInvoiceCreateDto dto)
         {
             using var transaction = await _context.Database.BeginTransactionAsync();
-            
+
             try
             {
                 var vendor = await _context.Vendors.FindAsync(dto.VendorId);
@@ -71,7 +71,7 @@ namespace VehiclePartsIMS_Backend.Services.Implementations
                 await _context.SaveChangesAsync();
                 await transaction.CommitAsync();
 
-                _logger.LogInformation("Purchase invoice {InvoiceNumber} created for vendor {VendorName}", 
+                _logger.LogInformation("Purchase invoice {InvoiceNumber} created for vendor {VendorName}",
                     invoiceNumber, vendor.VendorName);
 
                 return new PurchaseInvoiceResponseDto
@@ -102,7 +102,7 @@ namespace VehiclePartsIMS_Backend.Services.Implementations
         public async Task<SalesInvoiceResponseDto> CreateSalesInvoiceAsync(SalesInvoiceCreateDto dto)
         {
             using var transaction = await _context.Database.BeginTransactionAsync();
-            
+
             try
             {
                 var customer = await _context.Users.FindAsync(dto.CustomerId);
@@ -153,7 +153,7 @@ namespace VehiclePartsIMS_Backend.Services.Implementations
                 };
 
                 int? loyaltyDiscount = null;
-                
+
                 // Use > instead of >= (must be MORE THAN 5000, not equal to)
                 if (subtotal > LoyaltyThresholdCents)
                 {
@@ -163,8 +163,8 @@ namespace VehiclePartsIMS_Backend.Services.Implementations
                     loyaltyResult.DiscountAmount = loyaltyDiscount.Value;
                     loyaltyResult.DiscountedTotal = subtotal - loyaltyDiscount.Value;
                     loyaltyResult.Message = $"Loyalty discount applied! You saved {(loyaltyDiscount.Value / 100.0m):C}";
-                    
-                    _logger.LogInformation("Loyalty discount of {Discount:C} applied for customer {CustomerName}", 
+
+                    _logger.LogInformation("Loyalty discount of {Discount:C} applied for customer {CustomerName}",
                         loyaltyDiscount.Value / 100.0m, customer.FullName);
                 }
                 else
@@ -206,7 +206,7 @@ namespace VehiclePartsIMS_Backend.Services.Implementations
 
                 await CheckLowStock();
 
-                _logger.LogInformation("Sales invoice {InvoiceNumber} created for customer {CustomerName}. Total: {Total:C}, Discount: {Discount:C}", 
+                _logger.LogInformation("Sales invoice {InvoiceNumber} created for customer {CustomerName}. Total: {Total:C}, Discount: {Discount:C}",
                     invoiceNumber, customer.FullName, finalTotal / 100.0m, (loyaltyDiscount ?? 0) / 100.0m);
 
                 return new SalesInvoiceResponseDto
@@ -241,6 +241,51 @@ namespace VehiclePartsIMS_Backend.Services.Implementations
             }
         }
 
+        // F4: Get all purchase invoices
+        public async Task<List<PurchaseInvoiceResponseDto>> GetAllPurchaseInvoicesAsync()
+        {
+            var invoices = await _context.PurchaseInvoices
+                .Include(i => i.Vendor)
+                .Include(i => i.Items)
+                    .ThenInclude(item => item.Part)
+                .OrderByDescending(i => i.InvoiceDate)
+                .ThenByDescending(i => i.Id)
+                .ToListAsync();
+
+            return invoices.Select(MapPurchaseInvoiceToDto).ToList();
+        }
+
+        // F4: Get a single purchase invoice by id
+        public async Task<PurchaseInvoiceResponseDto?> GetPurchaseInvoiceByIdAsync(int id)
+        {
+            var invoice = await _context.PurchaseInvoices
+                .Include(i => i.Vendor)
+                .Include(i => i.Items)
+                    .ThenInclude(item => item.Part)
+                .FirstOrDefaultAsync(i => i.Id == id);
+
+            return invoice == null ? null : MapPurchaseInvoiceToDto(invoice);
+        }
+
+        private static PurchaseInvoiceResponseDto MapPurchaseInvoiceToDto(PurchaseInvoice invoice)
+        {
+            return new PurchaseInvoiceResponseDto
+            {
+                Id = invoice.Id,
+                InvoiceNumber = invoice.InvoiceNumber,
+                InvoiceDate = invoice.InvoiceDate,
+                VendorName = invoice.Vendor.VendorName,
+                TotalAmount = invoice.Items.Sum(i => i.Quantity * i.UnitCostPrice),
+                Items = invoice.Items.Select(i => new PurchaseInvoiceItemResponseDto
+                {
+                    PartName = i.Part.PartName,
+                    Quantity = i.Quantity,
+                    UnitCostPrice = i.UnitCostPrice,
+                    TotalPrice = i.Quantity * i.UnitCostPrice
+                }).ToList()
+            };
+        }
+
         private string GeneratePurchaseInvoiceNumber()
         {
             string yearMonth = DateTime.UtcNow.ToString("yyyyMM");
@@ -253,7 +298,7 @@ namespace VehiclePartsIMS_Backend.Services.Implementations
             if (last != null && last.InvoiceNumber.Length > 11)
             {
                 string lastSeq = last.InvoiceNumber.Substring(11);
-                if (int.TryParse(lastSeq, out int num)) 
+                if (int.TryParse(lastSeq, out int num))
                     seq = num + 1;
             }
             return $"PO-{yearMonth}-{seq:D4}";
@@ -271,7 +316,7 @@ namespace VehiclePartsIMS_Backend.Services.Implementations
             if (last != null && last.InvoiceNumber.Length > 12)
             {
                 string lastSeq = last.InvoiceNumber.Substring(12);
-                if (int.TryParse(lastSeq, out int num)) 
+                if (int.TryParse(lastSeq, out int num))
                     seq = num + 1;
             }
             return $"INV-{yearMonth}-{seq:D4}";
@@ -285,7 +330,7 @@ namespace VehiclePartsIMS_Backend.Services.Implementations
 
             foreach (var part in lowStockParts)
             {
-                _logger.LogWarning("LOW STOCK ALERT: Part '{PartName}' (ID: {Id}) has only {Stock} units remaining.", 
+                _logger.LogWarning("LOW STOCK ALERT: Part '{PartName}' (ID: {Id}) has only {Stock} units remaining.",
                     part.PartName, part.Id, part.StockQuantity);
             }
         }

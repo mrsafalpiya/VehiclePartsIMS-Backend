@@ -43,5 +43,41 @@ namespace VehiclePartsIMS_Backend.Controllers
                 return StatusCode(500, new { success = false, message = ex.Message });
             }
         }
+
+        /// <summary>
+        /// F4: Get all purchase invoices (Admin only)
+        /// </summary>
+        [HttpGet]
+        public async Task<IActionResult> GetAllPurchaseInvoices()
+        {
+            try
+            {
+                var result = await _invoiceService.GetAllPurchaseInvoicesAsync();
+                return Ok(new { success = true, data = result });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { success = false, message = ex.Message });
+            }
+        }
+
+        /// <summary>
+        /// F4: Get a single purchase invoice by id (Admin only)
+        /// </summary>
+        [HttpGet("{id:int}")]
+        public async Task<IActionResult> GetPurchaseInvoice(int id)
+        {
+            try
+            {
+                var result = await _invoiceService.GetPurchaseInvoiceByIdAsync(id);
+                if (result == null)
+                    return NotFound(new { success = false, message = $"Invoice {id} not found" });
+                return Ok(new { success = true, data = result });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { success = false, message = ex.Message });
+            }
+        }
     }
 }
