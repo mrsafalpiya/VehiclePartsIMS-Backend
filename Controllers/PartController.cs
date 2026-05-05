@@ -11,9 +11,9 @@ namespace VehiclePartsIMS_Backend.Controllers
     public class PartController(IPartService partService) : ControllerBase
     {
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll([FromQuery] int? vendorId = null)
         {
-            var parts = await partService.GetAllAsync();
+            var parts = await partService.GetAllAsync(vendorId);
             return Ok(parts);
         }
 

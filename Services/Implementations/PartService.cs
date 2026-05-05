@@ -16,12 +16,12 @@ namespace VehiclePartsIMS_Backend.Services.Implementations
             _context = context;
         }
 
-        public async Task<List<PartResponseDto>> GetAllAsync()
+        public async Task<List<PartResponseDto>> GetAllAsync(int? vendorId = null)
         {
-            return await _context.Parts
-                .Include(p => p.Vendor)
-                .Select(p => MapToDto(p))
-                .ToListAsync();
+            var query = _context.Parts.Include(p => p.Vendor).AsQueryable();
+            if (vendorId.HasValue)
+                query = query.Where(p => p.VendorId == vendorId.Value);
+            return await query.Select(p => MapToDto(p)).ToListAsync();
         }
 
         public async Task<PartResponseDto?> GetByIdAsync(int id)
