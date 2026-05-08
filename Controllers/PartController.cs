@@ -7,7 +7,7 @@ namespace VehiclePartsIMS_Backend.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin,Staff")]
     public class PartController(IPartService partService) : ControllerBase
     {
         [HttpGet]

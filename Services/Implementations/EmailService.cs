@@ -13,11 +13,13 @@ namespace VehiclePartsIMS_Backend.Services.Implementations
     {
         private readonly AppDbContext _context;
         private readonly EmailSettings _emailSettings;
+        private readonly ILogger<EmailService> _logger;
 
-        public EmailService(AppDbContext context, IOptions<EmailSettings> emailSettings)
+        public EmailService(AppDbContext context, IOptions<EmailSettings> emailSettings, ILogger<EmailService> logger)
         {
             _context = context;
             _emailSettings = emailSettings.Value;
+            _logger = logger;
         }
 
         public async Task SendInvoiceEmailAsync(int invoiceId)
@@ -116,6 +118,49 @@ namespace VehiclePartsIMS_Backend.Services.Implementations
                     </div>
                 </div>
             """;
+        }
+
+        public async Task SendEmailAsync(string toEmail, string subject, string body)
+        {
+            try
+            {
+                // Build the email message
+                var message = new MimeMessage();
+
+                message.From.Add(new MailboxAddress(_emailSettings.SenderName, _emailSettings.SenderEmail));
+                message.To.Add(new MailboxAddress(string.Empty, toEmail));
+                message.Subject = subject;
+
+                // Plain text body
+                message.Body = new TextPart("plain")
+                {
+                    Text = body
+                };
+
+                // Connect and send
+                using var smtpClient = new SmtpClient();
+
+                await smtpClient.ConnectAsync(
+                    _emailSettings.SmtpHost,
+                    _emailSettings.SmtpPort,
+                    SecureSocketOptions.StartTls
+                );
+
+                await smtpClient.AuthenticateAsync(
+                    _emailSettings.SenderEmail,
+                    _emailSettings.Password
+                );
+
+                await smtpClient.SendAsync(message);
+                await smtpClient.DisconnectAsync(true);
+
+                _logger.LogInformation("Email sent successfully to {Email}", toEmail);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to send email to {Email}", toEmail);
+                throw;
+            }
         }
     }
 }
