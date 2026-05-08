@@ -11,15 +11,17 @@ namespace VehiclePartsIMS_Backend.Services.Implementations
     {
         private readonly AppDbContext _context;
         private readonly ILogger<InvoiceService> _logger;
+        private readonly INotificationService _notificationService;
 
         // F16: Loyalty program constants
         private const int LoyaltyThresholdCents = 5000;
         private const int LoyaltyDiscountPercent = 10;
 
-        public InvoiceService(AppDbContext context, ILogger<InvoiceService> logger)
+        public InvoiceService(AppDbContext context, ILogger<InvoiceService> logger, INotificationService notificationService)
         {
             _context = context;
             _logger = logger;
+            _notificationService = notificationService;
         }
 
         // F4: Create purchase invoice 
@@ -138,6 +140,10 @@ namespace VehiclePartsIMS_Backend.Services.Implementations
                     });
 
                     part.StockQuantity -= item.Quantity;
+                    if (part.StockQuantity < 10)
+                    {
+                        await _notificationService.CreateLowStockNotificationAsync(part.PartName, part.StockQuantity);
+                    }
                     _context.Parts.Update(part);
                 }
 
