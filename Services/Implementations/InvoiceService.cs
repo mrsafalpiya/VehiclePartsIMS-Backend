@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using VehiclePartsIMS_Backend.Data;
 using VehiclePartsIMS_Backend.Data.Entities;
@@ -10,16 +11,20 @@ namespace VehiclePartsIMS_Backend.Services.Implementations
     public class InvoiceService : IInvoiceService
     {
         private readonly AppDbContext _context;
+        private readonly UserManager<User> _userManager;
         private readonly ILogger<InvoiceService> _logger;
+        private readonly IEmailService _emailService;
 
         // F16: Loyalty program constants
         private const int LoyaltyThresholdCents = 5000;
         private const int LoyaltyDiscountPercent = 10;
 
-        public InvoiceService(AppDbContext context, ILogger<InvoiceService> logger)
+        public InvoiceService(AppDbContext context, UserManager<User> userManager, ILogger<InvoiceService> logger, INotificationService notificationService, IEmailService emailService)
         {
             _context = context;
+            _userManager = userManager;
             _logger = logger;
+            _emailService = emailService;
         }
 
         // F4: Create purchase invoice 
@@ -138,6 +143,31 @@ namespace VehiclePartsIMS_Backend.Services.Implementations
                     });
 
                     part.StockQuantity -= item.Quantity;
+                    if (part.StockQuantity < 10)
+                    {
+                        var adminUser = (await _userManager.GetUsersInRoleAsync("Admin")).FirstOrDefault();
+
+                        if (adminUser != null)
+                        {
+                            var subject = "Low Stock Alert: Action Required";
+
+                            var body = $"""
+                Hello {adminUser.FullName},
+
+                This is an automated low stock alert.
+
+                Part Name   : {part.PartName}
+                Part Code   : {part.PartCode}
+                Current Stock: {part.StockQuantity} unit(s) remaining
+
+                Please consider restocking this part soon.
+
+                - Vehicle Parts IMS
+                """;
+
+                            await _emailService.SendEmailAsync(adminUser.Email, subject, body);
+                        }
+                    }
                     _context.Parts.Update(part);
                 }
 
