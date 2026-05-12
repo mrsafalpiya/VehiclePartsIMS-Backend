@@ -7,5 +7,8 @@ namespace VehiclePartsIMS_Backend.Services.Interfaces
         Task<FinancialReportDto> GetDailyReportAsync(DateOnly date);
         Task<FinancialReportDto> GetMonthlyReportAsync(int month, int year);
         Task<FinancialReportDto> GetYearlyReportAsync(int year);
+        Task<List<RegularCustomerReportItemDto>> GetRegularCustomersReportAsync();
+        Task<List<HighSpenderReportItemDto>> GetHighSpendersReportAsync();
+        Task<List<PendingCreditReportItemDto>> GetPendingCreditsReportAsync();
     }
 }
